@@ -7,6 +7,8 @@ import zipfile
 import time
 from threading import Thread
 import json
+from flask import Flask
+import threading
 
 # بياناتك كما طلبت
 TOKEN = '7673558136:AAE5FxAN--FkvajaaFbEs1IUF0s34cjMmIM'
@@ -252,6 +254,19 @@ def test_bot_speed(message):
         message_id=msg.message_id
     )
 
+# تشغيل Flask لفتح منفذ على Render
+web_app = Flask(__name__)
+
+@web_app.route('/')
+def home():
+    return 'Bot is alive!'
+
+def run_flask():
+    port = int(os.environ.get('PORT', 10000))
+    web_app.run(host='0.0.0.0', port=port)
+
 if __name__ == '__main__':
     print("🤖 البوت يعمل...")
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
     bot.polling(none_stop=True)
